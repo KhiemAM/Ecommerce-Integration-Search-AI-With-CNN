@@ -134,108 +134,106 @@ function SearchProductsPageManagement() {
     </Box>
   )
 
-  if (!results) {
-    return <NoResultPage />
-  }
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      {/* Sidebar for desktop */}
-      <Box sx={{ mt: 6 }}>
-        {!isMobile && (
+    !results ? (<NoResultPage />) : (
+      <Box sx={{ display: 'flex' }}>
+        {/* Sidebar for desktop */}
+        <Box sx={{ mt: 6 }}>
+          {!isMobile && (
+            <Drawer
+              variant="permanent"
+              sx={{
+                '& .MuiDrawer-paper': {
+                  width: 280,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  border: 'solid 1px #73C7C7',
+                  borderRadius: 2
+                }
+              }}
+            >
+              {filterDrawerContent}
+            </Drawer>
+          )}
+
+          {/* Mobile drawer */}
           <Drawer
-            variant="permanent"
+            variant="temporary"
+            anchor="left"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true
+            }}
             sx={{
+              display: { xs: 'block', md: 'none' },
               '& .MuiDrawer-paper': {
                 width: 280,
-                position: 'relative',
-                overflow: 'hidden',
-                border: 'solid 1px #73C7C7',
-                borderRadius: 2
+                bgcolor: 'white'
               }
             }}
           >
             {filterDrawerContent}
           </Drawer>
-        )}
-
-        {/* Mobile drawer */}
-        <Drawer
-          variant="temporary"
-          anchor="left"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true
-          }}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': {
-              width: 280,
-              bgcolor: 'white'
-            }
-          }}
-        >
-          {filterDrawerContent}
-        </Drawer>
-      </Box>
-
-      {/* Main content */}
-      <Box component="main" sx={{ flexGrow: 1, py: 6, px: 4 }}>
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 4,
-          maxWidth: 1200,
-          mx: 'auto'
-        }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-            Search Products
-          </Typography>
-          <Box>
-            {isMobile && (
-              <IconButton
-                onClick={handleDrawerToggle}
-                sx={{ mr: 3, bgcolor: 'white', boxShadow: 1, '&:hover': { bgcolor: '#73C7C7', color: 'white' } }}
-                size="small"
-              >
-                <FilterListOutlinedIcon />
-              </IconButton>
-            )}
-            <IconButton
-              sx={{
-                bgcolor: 'white',
-                boxShadow: 1,
-                mr: 1,
-                '&:hover': { bgcolor: '#73C7C7', color: 'white' }
-              }}
-              size='small'
-            >
-              <ArrowBackIosNewOutlinedIcon />
-            </IconButton>
-            <IconButton
-              sx={{
-                bgcolor: 'white',
-                boxShadow: 1,
-                '&:hover': { bgcolor: '#73C7C7', color: 'white' }
-              }}
-              size='small'
-            >
-              <ArrowForwardIosOutlinedIcon />
-            </IconButton>
-          </Box>
         </Box>
 
-        <Grid2 container spacing={3} sx={{ maxWidth: 1200, mx: 'auto' }}>
-          {products.map((product) => (
-            <Grid2 item size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
-              <CardProduct product={product} />
-            </Grid2>
-          ))}
-        </Grid2>
+        {/* Main content */}
+        <Box component="main" sx={{ flexGrow: 1, py: 6, px: 4 }}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 4,
+            maxWidth: 1200,
+            mx: 'auto'
+          }}>
+            <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+              Search Products
+            </Typography>
+            <Box>
+              {isMobile && (
+                <IconButton
+                  onClick={handleDrawerToggle}
+                  sx={{ mr: 3, bgcolor: 'white', boxShadow: 1, '&:hover': { bgcolor: '#73C7C7', color: 'white' } }}
+                  size="small"
+                >
+                  <FilterListOutlinedIcon />
+                </IconButton>
+              )}
+              <IconButton
+                sx={{
+                  bgcolor: 'white',
+                  boxShadow: 1,
+                  mr: 1,
+                  '&:hover': { bgcolor: '#73C7C7', color: 'white' }
+                }}
+                size='small'
+              >
+                <ArrowBackIosNewOutlinedIcon />
+              </IconButton>
+              <IconButton
+                sx={{
+                  bgcolor: 'white',
+                  boxShadow: 1,
+                  '&:hover': { bgcolor: '#73C7C7', color: 'white' }
+                }}
+                size='small'
+              >
+                <ArrowForwardIosOutlinedIcon />
+              </IconButton>
+            </Box>
+          </Box>
+
+          <Grid2 container spacing={3} sx={{ maxWidth: 1200, mx: 'auto' }}>
+            {products.map((product) => (
+              <Grid2 item size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
+                <CardProduct product={product} />
+              </Grid2>
+            ))}
+          </Grid2>
+        </Box>
       </Box>
-    </Box>
+    )
   )
 }
 

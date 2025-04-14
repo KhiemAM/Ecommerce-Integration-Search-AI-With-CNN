@@ -14,17 +14,19 @@ import {
   InputAdornment,
   Grid2
 } from '@mui/material'
-import { Search as SearchIcon, History as HistoryIcon, Star as StarIcon } from '@mui/icons-material'
+import { Search as SearchIcon, History as HistoryIcon, Star as StarIcon, CameraAlt as CameraIcon } from '@mui/icons-material'
 import { useDropzone } from 'react-dropzone'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { searchProductAPI } from '~/redux/product/productSlice'
+import { useLoading } from '~/context/loading'
 
 function SearchButtonModalCustom() {
   const [open, setOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [uploadedFiles, setUploadedFiles] = useState([])
+  const { setIsLoading } = useLoading()
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -53,6 +55,17 @@ function SearchButtonModalCustom() {
     }
   })
 
+  // Xử lý khi chụp ảnh từ camera
+  const handleCameraCapture = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      const fileWithPreview = Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })
+      setUploadedFiles((prev) => [...prev, fileWithPreview])
+    }
+  }
+
   useEffect(() => {
     return () => {
       uploadedFiles.forEach((file) => URL.revokeObjectURL(file.preview))
@@ -66,26 +79,23 @@ function SearchButtonModalCustom() {
     setUploadedFiles([])
   }
 
-  // Hàm gửi ảnh qua FormData sử dụng axios
   const sendToBackend = async () => {
+    setIsLoading(true)
     const formData = new FormData()
     if (uploadedFiles.length > 0) {
-      formData.append('file', uploadedFiles[0]) // Chỉ gửi file đầu tiên với key "file"
-    }
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1])
+      formData.append('file', uploadedFiles[0])
     }
 
     try {
-      dispatch(searchProductAPI(formData))
+      await dispatch(searchProductAPI(formData))
       navigate('/products/search')
     } catch (error) {
       console.error('Error sending to backend:', error.response || error.message)
     } finally {
-      handleClose() // Đóng modal sau khi gửi
-      setUploadedFiles([]) // Xóa danh sách file đã upload
-      setSearchQuery('') // Xóa ô tìm kiếm
+      handleClose()
+      setUploadedFiles([])
+      setSearchQuery('')
+      setIsLoading(false)
     }
   }
 
@@ -155,7 +165,18 @@ function SearchButtonModalCustom() {
               input: {
                 disableUnderline: true,
                 startAdornment: (
-                  <InputAdornment position="start">
+                  <InputAdornment
+                    position="start"
+                    onClick={sendToBackend}
+                    sx={{
+                      cursor: 'pointer',
+                      '& .MuiSvgIcon-root': {
+                        '&:hover': {
+                          color: '#73C7C7'
+                        }
+                      }
+                    }}
+                  >
                     <SearchIcon color="action" />
                   </InputAdornment>
                 ),
@@ -204,6 +225,25 @@ function SearchButtonModalCustom() {
             )}
           </Box>
 
+          {/* Nút chụp ảnh từ camera */}
+          <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
+            <Button
+              variant="outlined"
+              startIcon={<CameraIcon />}
+              component="label"
+              sx={{ textTransform: 'none' }}
+            >
+              Take a Photo
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment" // Mở camera (environment: camera sau, user: camera trước)
+                onChange={handleCameraCapture}
+                style={{ display: 'none' }}
+              />
+            </Button>
+          </Box>
+
           {uploadedFiles.length > 0 && (
             <Box sx={{ marginBottom: '20px' }}>
               <Typography variant="subtitle1" gutterBottom>Uploaded Images:</Typography>
@@ -226,9 +266,6 @@ function SearchButtonModalCustom() {
                   </Grid2>
                 ))}
               </Grid2>
-              <Button variant="contained" onClick={sendToBackend} sx={{ marginTop: '10px' }}>
-                Send to Backend
-              </Button>
             </Box>
           )}
 

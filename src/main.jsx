@@ -16,18 +16,21 @@ import { Provider } from 'react-redux'
 //Redux persist
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
+import LoadingProvider from './context/loading'
 const persistor = persistStore(store)
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
-      <BrowserRouter basename='/'>
-        <ThemeProvider theme={theme}>
-          <GlobalStyles styles={{ a: { textDecoration: 'none', color: 'inherit' } }}/>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
-      </BrowserRouter>
+      <LoadingProvider>
+        <BrowserRouter basename='/'>
+          <ThemeProvider theme={theme}>
+            <GlobalStyles styles={{ a: { textDecoration: 'none', color: 'inherit' } }}/>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
+        </BrowserRouter>
+      </LoadingProvider>
     </PersistGate>
   </Provider>
 )
