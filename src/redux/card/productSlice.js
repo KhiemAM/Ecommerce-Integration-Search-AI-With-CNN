@@ -3,14 +3,14 @@ import authorizedAxiosInstance from '~/utils/authorizeAxios'
 import { API_ROOT } from '~/utils/constants'
 
 const initialState = {
-  currentProduct: null
+  currentCard: null
 }
 
-export const searchProductAPI = createAsyncThunk(
-  'product/searchProductAPI',
+export const getAllCardAPI = createAsyncThunk(
+  'card/getAllCardAPI',
   async (formData) => {
     try {
-      const response = await authorizedAxiosInstance.post(`${API_ROOT}/products/predict`, formData, {
+      const response = await authorizedAxiosInstance.get(`${API_ROOT}/cart/items`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data' // Axios sẽ tự động thêm boundary
         }
@@ -28,7 +28,7 @@ export const productSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(searchProductAPI.fulfilled, (state, action) => {
+    builder.addCase(getAllCardAPI.fulfilled, (state, action) => {
       const product = action.payload
       state.currentProduct = product
     })

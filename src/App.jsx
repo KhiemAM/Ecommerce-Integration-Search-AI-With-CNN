@@ -13,7 +13,8 @@ import CardPageManagement from '~/pages/CardPage/CardPageManagement'
 import CheckoutPageManagement from './pages/CheckoutPage/CheckoutPageManagement'
 import ProductsPageManagement from './pages/ProductPage/ProductsPageManagement'
 import SearchProductsPageManagement from './pages/SearchProductPage/SearchProductsPageManagement'
-
+import ProductDetailManagement from './pages/ProductDetail/ProductDetailManagement'
+import Footer from './components/Footer/Footer'
 function MainLayout() {
   return (
     <Box>
@@ -21,11 +22,13 @@ function MainLayout() {
       <Container maxWidth="lg">
         <Outlet /> {/* Nội dung của Route sẽ được render tại đây */}
       </Container>
+      {/* <Footer /> */}
     </Box>
   )
 }
 
 function App() {
+
   return (
     <Routes>
       <Route element={<MainLayout />}>
@@ -35,6 +38,7 @@ function App() {
         <Route path="/card" element={<CardPageManagement />} />
         <Route path="/card/checkout" element={<CheckoutPageManagement />} />
         <Route path="/products/search" element={<SearchProductsPageManagement />} />
+        <Route path="/product/:id" element={<ProductDetailManagement />} />
       </Route>
 
       {/* Authentcation */}

@@ -11,8 +11,14 @@ import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 
 export default function CardProduct({ product }) {
+  const currentUser = useSelector(selectCurrentUser)
+  console.log('🚀 ~ CardProduct ~ currentUser:', currentUser)
+
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -29,11 +35,11 @@ export default function CardProduct({ product }) {
           }
         }}
         image={`data:image/jpeg;base64,${product.image}`}
-        title={product.name}
+        title={product.Name}
       >
         <Stack
           className="quick-actions"
-          spacing={1}x
+          spacing={1}
           sx={{
             position: 'absolute',
             top: 10,
@@ -80,12 +86,22 @@ export default function CardProduct({ product }) {
         </Button>
       </CardMedia>
       <CardContent>
-        <Typography gutterBottom variant="h6" component="div">
-          {product.name}
+        <Typography
+          gutterBottom
+          variant="h6"
+          component={Link}
+          to={`/product/${product.id}`}
+          sx={{
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+        >
+          {product.Name}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="body2" sx={{ color: 'red' }}>
-            ${product.price}
+            ${product.Price}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
             <Rating value={product.rating} readOnly size="small" />

@@ -140,7 +140,7 @@ function LoginForm() {
             </Button>
           </CardActions>
           <Box sx={{ padding: '0 1em 1em 1em', textAlign: 'center' }}>
-            <Typography>New to Trello MERN Stack Advance</Typography>
+            <Typography>Wellcome to Aitilo</Typography>
             <Link to='/register'>
               <Typography sx={{ color: 'primary.main', '&:hover': { color: '#ffbb39' } }}>
                 Create an account!

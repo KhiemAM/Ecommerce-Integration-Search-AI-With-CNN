@@ -22,7 +22,7 @@ import { useDispatch } from 'react-redux'
 import { searchProductAPI } from '~/redux/product/productSlice'
 import { useLoading } from '~/context/loading'
 
-function SearchButtonModalCustom() {
+function SearchButtonModalCustom({ isDisplayText = true }) {
   const [open, setOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [uploadedFiles, setUploadedFiles] = useState([])
@@ -109,6 +109,7 @@ function SearchButtonModalCustom() {
         startIcon={<SearchIcon />}
         onClick={handleOpen}
         sx={{
+          width: '100%',
           borderRadius: '24px',
           padding: '8px 16px',
           textTransform: 'none',
@@ -126,19 +127,21 @@ function SearchButtonModalCustom() {
         }}
       >
         Search...
-        <Typography
-          component="span"
-          sx={{
-            color: 'black',
-            backgroundColor: 'white',
-            padding: '0 6px',
-            borderRadius: '4px',
-            marginLeft: '8px',
-            fontSize: '14px'
-          }}
-        >
-          Ctrl+K
-        </Typography>
+        {isDisplayText && (
+          <Typography
+            component="span"
+            sx={{
+              color: 'black',
+              backgroundColor: 'white',
+              padding: '0 6px',
+              borderRadius: '4px',
+              marginLeft: '8px',
+              fontSize: '14px'
+            }}
+          >
+            Ctrl+K
+          </Typography>
+        )}
       </Button>
 
       <Dialog

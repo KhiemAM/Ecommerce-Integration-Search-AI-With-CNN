@@ -51,7 +51,7 @@ function SearchProductsPageManagement() {
 
   useEffect(() => {
     if (results) {
-      setProducts(formatData(results?.related_flowers))
+      setProducts(formatData(results?.related_products))
     }
   }, [results])
 

@@ -10,7 +10,7 @@ export const registerUserAPI = async (data) => {
 }
 
 export const getAllProductsAPI = async () => {
-  const response = await authorizedAxiosInstance.get(`${API_ROOT}/flowers`)
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/products`)
   return response.data
 }
 
@@ -22,3 +22,8 @@ export const getAllProductsAPI = async () => {
 //   })
 //   return response.data
 // }
+
+export const getProductByIdAPI = async (id) => {
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/products/${id}`)
+  return response.data
+}
