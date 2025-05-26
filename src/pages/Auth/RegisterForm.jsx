@@ -27,8 +27,8 @@ function RegisterForm() {
   const navigate = useNavigate()
 
   const submitRegister = (data) => {
-    const { name, email, password } = data
-    toast.promise(registerUserAPI({ name, email, password }), {
+    const { email, password } = data
+    toast.promise(registerUserAPI({ email, password }), {
       pending: 'Registering is in progress...'
     }).then((user) => {
       navigate(`/login?registeredEmail=${user.email}`)
@@ -57,20 +57,6 @@ function RegisterForm() {
             Author: KhiemAM
           </Box>
           <Box sx={{ padding: '0 1em 1em 1em' }}>
-            <Box sx={{ marginTop: '1em' }}>
-              <TextField
-                autoFocus
-                fullWidth
-                label='Name...'
-                type='text'
-                variant='outlined'
-                error={!!errors['name']}
-                {...register('name', {
-                  required: FIELD_REQUIRED_MESSAGE
-                })}
-              />
-              <FieldErrorAlert errors={errors} fieldName='name' />
-            </Box>
             <Box sx={{ marginTop: '1em' }}>
               <TextField
                 autoFocus

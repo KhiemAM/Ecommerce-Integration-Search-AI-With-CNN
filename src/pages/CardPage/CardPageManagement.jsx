@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
-  Button,
   Container,
   IconButton,
   Paper,
@@ -21,6 +20,14 @@ import { Link } from 'react-router-dom'
 import ButtonSecondary from '~/components/Buttton/ButtonSecondary'
 import ButtonContainedPrimary from '~/components/Buttton/ButtonContainedPrimary'
 import ButtonContainedSecondary from '~/components/Buttton/ButtonContainedSecondary'
+import { useLoading } from '~/context'
+import {
+  deleteCartItemAPI,
+  getCartAPI,
+  updateCartItemAPI,
+  updateSelectedItemCartAPI
+} from '~/apis'
+import { toast } from 'react-toastify'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 600,
@@ -35,53 +42,94 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   }
 }))
 
-const products = [
-  {
-    id: 1,
-    name: 'LCD Monitor',
-    price: 650,
-    image: 'https://images.unsplash.com/photo-1616763355548-1b606f439f86?auto=format&fit=crop&q=80&w=100',
-    description: '27-inch 4K Ultra HD'
-  },
-  {
-    id: 2,
-    name: 'H1 Gamepad',
-    price: 550,
-    image: 'https://images.unsplash.com/photo-1592840496694-26d035b52b48?auto=format&fit=crop&q=80&w=100',
-    description: 'Wireless Controller'
-  }
-]
-
 function CardPageManagement() {
-  const [quantities, setQuantities] = useState({
-    1: 1,
-    2: 3
-  })
+  const formatCurrencyVND = (value) =>
+    new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(value)
+
+  const [quantities, setQuantities] = useState({})
+  const { setIsLoading } = useLoading()
+  const [cards, setCards] = useState([])
+
+  const fetchProductDetails = async () => {
+    try {
+      setIsLoading(true)
+      const response = await getCartAPI()
+      setCards(
+        response.map((item) => ({
+          ProductId: item.ProductId,
+          Name: item.Name,
+          Price: item.Price,
+          ImageURL: item.ImageURL,
+          IsChecked: item.IsChecked
+        }))
+      )
+      setQuantities(
+        response.reduce((acc, item) => {
+          acc[item.ProductId] = item.Quantity
+          return acc
+        }, {})
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchProductDetails()
+  }, [])
 
   const handleQuantityChange = (productId, value) => {
-    const newValue = parseInt(value) || 0
-    setQuantities(prev => ({
+    const newValue = parseInt(value) || 1
+    const clampedValue = Math.max(1, Math.min(99, newValue))
+    setQuantities((prev) => ({
       ...prev,
-      [productId]: Math.max(0, Math.min(99, newValue))
+      [productId]: clampedValue
     }))
-  }
-
-  const handleRemoveItem = (productId) => {
-    setQuantities(prev => {
-      const newQuantities = { ...prev }
-      delete newQuantities[productId]
-      return newQuantities
+    updateCartItemAPI({
+      product_id: productId,
+      quantity: clampedValue
     })
   }
 
-  const calculateSubtotal = (price, quantity) => {
-    return price * quantity
+  const calculateSubtotal = (price, quantity) => price * quantity
+
+  // ✅ Chỉ tính tổng với sản phẩm được chọn
+  const totalAmount = Object.entries(quantities).reduce((sum, [productId, quantity]) => {
+    const product = cards.find((p) => p.ProductId === parseInt(productId))
+    if (product && product.IsChecked) {
+      return sum + calculateSubtotal(product.Price, quantity)
+    }
+    return sum
+  }, 0)
+
+  const handleCheckboxChange = async (productId) => {
+    const response = await updateSelectedItemCartAPI({ product_id: productId })
+    setCards((prevCards) =>
+      prevCards.map((item) =>
+        item.ProductId === productId
+          ? { ...item, IsChecked: response.IsChecked }
+          : item
+      )
+    )
   }
 
-  const totalAmount = Object.entries(quantities).reduce((sum, [productId, quantity]) => {
-    const product = products.find(p => p.id === parseInt(productId))
-    return sum + (product ? calculateSubtotal(product.price, quantity) : 0)
-  }, 0)
+  const handleDeleteItem = async (productId) => {
+    try {
+      setIsLoading(true)
+      const res = await deleteCartItemAPI(productId)
+      setQuantities((prev) => {
+        const newQuantities = { ...prev }
+        delete newQuantities[productId]
+        return newQuantities
+      })
+      toast.success(res.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -89,7 +137,7 @@ function CardPageManagement() {
         Shopping Cart
       </Typography>
 
-      <Box sx={{ }}>
+      <Box>
         <Box sx={{ flex: 2 }}>
           <TableContainer
             component={Paper}
@@ -110,100 +158,102 @@ function CardPageManagement() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {products.map((product) => quantities[product.id] !== undefined && (
-                  <StyledTableRow key={product.id}>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        sx={{
-                          color: '#73C7C7',
-                          '&.Mui-checked': {
-                            color: '#73C7C7'
-                          }
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Paper
-                          elevation={0}
-                          sx={{
-                            width: 80,
-                            height: 80,
-                            borderRadius: 2,
-                            overflow: 'hidden',
-                            border: '1px solid',
-                            borderColor: 'grey.200'
-                          }}
-                        >
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                {cards.map(
+                  (product) =>
+                    quantities[product.ProductId] !== undefined && (
+                      <StyledTableRow key={product.ProductId}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={() => handleCheckboxChange(product.ProductId)}
+                            checked={!!product.IsChecked}
+                            sx={{
+                              color: '#73C7C7',
+                              '&.Mui-checked': {
+                                color: '#73C7C7'
+                              }
+                            }}
                           />
-                        </Paper>
-                        <Box>
-                          <Typography sx={{ fontWeight: 600, mb: 0.5 }}>{product.name}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {product.description}
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Paper
+                              elevation={0}
+                              sx={{
+                                width: 80,
+                                height: 80,
+                                borderRadius: 2,
+                                overflow: 'hidden',
+                                border: '1px solid',
+                                borderColor: 'grey.200'
+                              }}
+                            >
+                              <img
+                                src={product.ImageURL}
+                                alt={product.Name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            </Paper>
+                            <Box>
+                              <Typography sx={{ fontWeight: 600, mb: 0.5 }}>
+                                {product.Name}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontWeight: 600, color: '#2C3E50' }}>
+                            {formatCurrencyVND(product.Price)}
                           </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 600, color: '#2C3E50' }}>
-                        ${product.price}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        type="number"
-                        value={parseInt(quantities[product.id]).toString()}
-                        onChange={(e) => handleQuantityChange(product.id, e.target.value)}
-                        sx={{
-                          width: '100px',
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 2
-                          }
-                        }}
-                        variant="outlined"
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 600, color: '#E74C3C' }}>
-                        ${calculateSubtotal(product.price, quantities[product.id])}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => handleRemoveItem(product.id)}
-                        size="small"
-                        sx={{
-                          color: 'grey.500',
-                          '&:hover': {
-                            color: '#E74C3C',
-                            backgroundColor: 'rgba(231, 76, 60, 0.04)'
-                          }
-                        }}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </TableCell>
-                  </StyledTableRow>
-                ))}
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            type="number"
+                            value={parseInt(quantities[product.ProductId]).toString()}
+                            onChange={(e) =>
+                              handleQuantityChange(product.ProductId, e.target.value)
+                            }
+                            sx={{
+                              width: '100px',
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 2
+                              }
+                            }}
+                            variant="outlined"
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontWeight: 600, color: '#E74C3C' }}>
+                            {formatCurrencyVND(
+                              calculateSubtotal(product.Price, quantities[product.ProductId])
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() => handleDeleteItem(product.ProductId)}
+                            size="small"
+                            sx={{
+                              color: 'grey.500',
+                              '&:hover': {
+                                color: '#E74C3C',
+                                backgroundColor: 'rgba(231, 76, 60, 0.04)'
+                              }
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        </TableCell>
+                      </StyledTableRow>
+                    )
+                )}
               </TableBody>
             </Table>
           </TableContainer>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-            <ButtonSecondary
-              title="Continue Shopping"
-              onClick={() => {}}
-            />
-            <ButtonSecondary
-              title="Update Cart"
-              onClick={() => {}}
-            />
+            <ButtonSecondary title="Continue Shopping" onClick={() => {}} />
+            <ButtonSecondary title="Update Cart" onClick={() => {}} />
           </Box>
         </Box>
 
@@ -230,36 +280,38 @@ function CardPageManagement() {
                 }
               }}
             />
-            <ButtonContainedSecondary title='Apply Coupon' onClick={() => {}}/>
+            <ButtonContainedSecondary title="Apply Coupon" onClick={() => {}} />
 
-            <Box sx={{
-              pt: 3,
-              borderTop: 1,
-              borderColor: 'grey.200'
-            }}>
+            <Box sx={{ pt: 3, borderTop: 1, borderColor: 'grey.200' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography color="text.secondary">Subtotal</Typography>
-                <Typography sx={{ fontWeight: 600 }}>${totalAmount}</Typography>
+                <Typography sx={{ fontWeight: 600 }}>
+                  {formatCurrencyVND(totalAmount)}
+                </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography color="text.secondary">Shipping</Typography>
                 <Typography sx={{ fontWeight: 600, color: '#27AE60' }}>Free</Typography>
               </Box>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                mb: 3,
-                pt: 2,
-                borderTop: 1,
-                borderColor: 'grey.200'
-              }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  mb: 3,
+                  pt: 2,
+                  borderTop: 1,
+                  borderColor: 'grey.200'
+                }}
+              >
                 <Typography sx={{ fontWeight: 600 }}>Total</Typography>
-                <Typography sx={{ fontWeight: 600, fontSize: '1.2rem', color: '#E74C3C' }}>
-                  ${totalAmount}
+                <Typography
+                  sx={{ fontWeight: 600, fontSize: '1.2rem', color: '#E74C3C' }}
+                >
+                  {formatCurrencyVND(totalAmount)}
                 </Typography>
               </Box>
-              <Link to='checkout'>
-                <ButtonContainedPrimary title='Proceed to Checkout' onClick={() => {}}/>
+              <Link to="checkout">
+                <ButtonContainedPrimary title="Proceed to Checkout" onClick={() => {}} />
               </Link>
             </Box>
           </Paper>

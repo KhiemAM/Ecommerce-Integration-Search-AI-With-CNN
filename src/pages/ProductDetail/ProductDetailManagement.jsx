@@ -140,7 +140,7 @@ const DeliveryInfo = () => (
 )
 
 function ProductDetailManagement() {
-  const [quantity, setQuantity] = useState(2)
+  const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
 
   const [product, setProduct] = useState(null)

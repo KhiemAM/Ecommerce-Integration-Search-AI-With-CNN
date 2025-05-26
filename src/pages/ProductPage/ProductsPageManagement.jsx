@@ -71,7 +71,7 @@ function ProductsPageManagement() {
   const { setIsLoading } = useLoading()
 
   const fetchData = async () => {
-    // setIsLoading(true)
+    setIsLoading(true)
     const response = await getAllProductsAPI()
     setProducts(formatData(response.data))
     setIsLoading(false)

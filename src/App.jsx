@@ -22,7 +22,7 @@ function MainLayout() {
       <Container maxWidth="lg">
         <Outlet /> {/* Nội dung của Route sẽ được render tại đây */}
       </Container>
-      {/* <Footer /> */}
+      <Footer />
     </Box>
   )
 }

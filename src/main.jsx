@@ -17,6 +17,7 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
 import LoadingProvider from './context/loading'
+import { ToastContainer } from 'react-toastify'
 const persistor = persistStore(store)
 
 createRoot(document.getElementById('root')).render(
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')).render(
       <LoadingProvider>
         <BrowserRouter basename='/'>
           <ThemeProvider theme={theme}>
+            <ToastContainer position='bottom-right'/>
             <GlobalStyles styles={{ a: { textDecoration: 'none', color: 'inherit' } }}/>
             <CssBaseline />
             <App />

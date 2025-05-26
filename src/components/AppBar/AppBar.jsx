@@ -22,9 +22,11 @@ import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import SearchButtonModalCustom from '../Search/SearchButtonModalCustom'
 import { useDispatch } from 'react-redux'
-import { clearCurrentUser } from '~/redux/user/userSlice'
+import { logoutUserAPI } from '~/redux/user/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const pages = [
   {
@@ -71,6 +73,14 @@ function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
   const dispatch = useDispatch()
+
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    dispatch(logoutUserAPI())
+    navigate('/login')
+    toast.success('Logged out successfully!')
+  }
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -206,7 +216,7 @@ function ResponsiveAppBar() {
                   aria-label="show 17 new notifications"
                   color="inherit"
                 >
-                  <Badge badgeContent={17} color="error">
+                  <Badge badgeContent={0} color="error">
                     <LocalGroceryStoreOutlinedIcon />
                   </Badge>
                 </IconButton>
@@ -237,7 +247,7 @@ function ResponsiveAppBar() {
                 {settings.map((setting) => (
                   <MenuItem key={setting.title} onClick={handleCloseUserMenu} sx={{ display: 'flex', gap: 1 }}>
                     {setting.title === 'Logout' ? (
-                      <Link to="/login" style={{ textDecoration: 'none', color: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={() => dispatch(clearCurrentUser())}>
+                      <Link to="/login" style={{ textDecoration: 'none', color: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center' }} onClick={handleLogout}>
                         <IconButton sx={{ color: '#ffffff' }}>
                           {setting.icon}
                         </IconButton>

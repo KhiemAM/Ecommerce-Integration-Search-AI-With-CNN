@@ -13,12 +13,9 @@ const authorizedAxiosInstance = axios.create({
   headers: {
     'ngrok-skip-browser-warning': '69420'
   },
-  timeout: 30000
+  timeout: 30000,
+  withCredentials: true
 })
-
-authorizedAxiosInstance.defaults.timeout = 1000 * 60 * 10
-
-authorizedAxiosInstance.defaults.withCredentials = true
 
 authorizedAxiosInstance.interceptors.request.use((config) => {
   interceptorLoadingElement(true)
