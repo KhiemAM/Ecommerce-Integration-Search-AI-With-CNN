@@ -253,6 +253,13 @@ function ResponsiveAppBar() {
                         </IconButton>
                         <Typography sx={{ textAlign: 'center', color: '#ffffff' }}>{setting.title}</Typography>
                       </Link>
+                    ) : setting.title === 'Manage My Account' ? (
+                      <Link to="/information" style={{ textDecoration: 'none', color: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <IconButton sx={{ color: '#ffffff' }}>
+                          {setting.icon}
+                        </IconButton>
+                        <Typography sx={{ textAlign: 'center', color: '#ffffff' }}>{setting.title}</Typography>
+                      </Link>
                     ) : (
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <IconButton sx={{ color: '#ffffff' }}>

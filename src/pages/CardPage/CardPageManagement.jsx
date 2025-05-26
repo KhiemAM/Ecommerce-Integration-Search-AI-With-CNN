@@ -188,7 +188,7 @@ function CardPageManagement() {
                               }}
                             >
                               <img
-                                src={product.ImageURL}
+                                src={`data:image/jpeg;base64,${product.ImageURL}`}
                                 alt={product.Name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />

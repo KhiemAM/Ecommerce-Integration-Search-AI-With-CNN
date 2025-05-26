@@ -15,6 +15,7 @@ import ProductsPageManagement from './pages/ProductPage/ProductsPageManagement'
 import SearchProductsPageManagement from './pages/SearchProductPage/SearchProductsPageManagement'
 import ProductDetailManagement from './pages/ProductDetail/ProductDetailManagement'
 import Footer from './components/Footer/Footer'
+import InformationAccountManagement from './pages/InformationAccountPage/InformationAccountManagement'
 function MainLayout() {
   return (
     <Box>
@@ -39,6 +40,7 @@ function App() {
         <Route path="/card/checkout" element={<CheckoutPageManagement />} />
         <Route path="/products/search" element={<SearchProductsPageManagement />} />
         <Route path="/product/:id" element={<ProductDetailManagement />} />
+        <Route path="/information" element={<InformationAccountManagement />} />
       </Route>
 
       {/* Authentcation */}
