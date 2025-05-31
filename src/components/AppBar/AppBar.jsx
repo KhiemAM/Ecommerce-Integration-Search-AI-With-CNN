@@ -77,9 +77,9 @@ function ResponsiveAppBar() {
   const navigate = useNavigate()
 
   const handleLogout = async () => {
-    dispatch(logoutUserAPI())
-    navigate('/login')
+    await dispatch(logoutUserAPI())
     toast.success('Logged out successfully!')
+    navigate('/login')
   }
 
   const handleOpenNavMenu = (event) => {

@@ -1,27 +1,64 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Paper } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { Grid2, TextField } from '@mui/material'
 import { Button, CircularProgress, Typography } from '@mui/material'
+import MenuItem from '@mui/material/MenuItem'
+import { createInformationAccountAPI, getInformationAccountAPI, updateInformationAccountAPI } from '~/apis'
+import { useLoading } from '~/context'
+// import { useSelector } from 'react-redux'
+// import { selectCurrentUser } from '~/redux/user/userSlice'
 
 const InformationAccountManagement = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  // const currentUser = useSelector(selectCurrentUser)?.user_id
+  const { setIsLoading } = useLoading()
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
 
-  const onSubmit = (event) => {
-    event.preventDefault()
-    setIsSubmitting(true)
+  const fetchInformation = async () => {
+    try {
+      setIsLoading(true)
+      const res = await getInformationAccountAPI()
+      if (res) {
+        setIsSaved(true)
+      } else {
+        setIsSaved(false)
+      }
+      reset({
+        first_name: res.first_name || '',
+        last_name: res.last_name || '',
+        date_of_birth: res.date_of_birth || '',
+        gender: res.gender || '',
+        address: res.address || ''
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-    // Simulate API call
-    setTimeout(() => {
+  useEffect(() => {
+    fetchInformation()
+  }, [])
+
+  const onSubmit = async(data) => {
+    console.log('🚀 ~ onSubmit ~ data:', data)
+    try {
+      setIsSubmitting(true)
+      if (isSaved) {
+        await updateInformationAccountAPI(data)
+      } else {
+        await createInformationAccountAPI(data)
+      }
+    } finally {
       setIsSubmitting(false)
-    }, 1500)
+    }
   }
 
   const handleCancel = () => {
-    console.log('Cancelled')
+    reset()
   }
 
   return (
@@ -45,6 +82,9 @@ const InformationAccountManagement = () => {
               type='text'
               variant='outlined'
               error={!!errors['first_name']}
+              slotProps={{
+                inputLabel: { shrink: true }
+              }}
               {...register('first_name', {
                 required: FIELD_REQUIRED_MESSAGE
               })}
@@ -59,6 +99,9 @@ const InformationAccountManagement = () => {
               type='text'
               variant='outlined'
               error={!!errors['last_name']}
+              slotProps={{
+                inputLabel: { shrink: true }
+              }}
               {...register('last_name', {
                 required: FIELD_REQUIRED_MESSAGE
               })}
@@ -70,9 +113,12 @@ const InformationAccountManagement = () => {
               autoFocus
               fullWidth
               label='Date of Birth'
-              type='text'
+              type='date'
               variant='outlined'
               error={!!errors['date_of_birth']}
+              slotProps={{
+                inputLabel: { shrink: true }
+              }}
               {...register('date_of_birth', {
                 required: FIELD_REQUIRED_MESSAGE
               })}
@@ -83,14 +129,25 @@ const InformationAccountManagement = () => {
             <TextField
               autoFocus
               fullWidth
+              select
               label='Gender'
-              type='text'
               variant='outlined'
               error={!!errors['gender']}
+              value={watch('gender') || ''}
+              slotProps={{
+                inputLabel: { shrink: true }
+              }}
               {...register('gender', {
                 required: FIELD_REQUIRED_MESSAGE
               })}
-            />
+            >
+              <MenuItem key='Nam' value='Nam'>
+                Nam
+              </MenuItem>
+              <MenuItem key='Nữ' value='Nữ'>
+                Nữ
+              </MenuItem>
+            </TextField>
             <FieldErrorAlert errors={errors} fieldName='gender' />
           </Grid2>
           <Grid2 size= {{ xs: 12, sm: 6 }}>
@@ -101,6 +158,9 @@ const InformationAccountManagement = () => {
               type='text'
               variant='outlined'
               error={!!errors['address']}
+              slotProps={{
+                inputLabel: { shrink: true }
+              }}
               {...register('address', {
                 required: FIELD_REQUIRED_MESSAGE
               })}
@@ -128,9 +188,11 @@ const InformationAccountManagement = () => {
               }
             }}
           >
-        Cancel
+            Cancel
           </Button>
           <Button
+            loading={isSubmitting}
+            loadingPosition='start'
             variant="contained"
             color="primary"
             type="submit"
@@ -143,11 +205,7 @@ const InformationAccountManagement = () => {
               }
             }}
           >
-            {isSubmitting ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Save Changes'
-            )}
+            {isSaved ? 'Save' : 'Create'}
           </Button>
         </Box>
       </Paper>

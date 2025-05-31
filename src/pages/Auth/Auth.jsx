@@ -12,7 +12,7 @@ function Auth() {
   const isLogin = location.pathname === '/login'
   const isRegister = location.pathname === '/register'
 
-  const currentUser = useSelector(selectCurrentUser)
+  const currentUser = useSelector(selectCurrentUser)?.user_id
   if (currentUser) {
     return <Navigate to='/' replace={true}/>
   }

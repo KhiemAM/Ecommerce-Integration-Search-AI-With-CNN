@@ -52,3 +52,23 @@ export const deleteCartItemAPI = async (id) => {
   const response = await authorizedAxiosInstance.delete(`${API_ROOT}/carts/${id}`)
   return response.data
 }
+
+export const createInformationAccountAPI = async (data) => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/informations`, data)
+  return response.data
+}
+
+export const getInformationAccountAPI = async () => {
+  const response = await authorizedAxiosInstance.get(`${API_ROOT}/informations/info`)
+  return response.data
+}
+
+export const updateInformationAccountAPI = async (data) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/informations`, data)
+  return response.data
+}
+
+export const invoicesAPI = async () => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/invoices/payment`)
+  return response.data
+}

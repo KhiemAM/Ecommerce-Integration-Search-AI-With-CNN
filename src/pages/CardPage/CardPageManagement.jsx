@@ -28,6 +28,8 @@ import {
   updateSelectedItemCartAPI
 } from '~/apis'
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 600,
@@ -49,6 +51,7 @@ function CardPageManagement() {
       currency: 'VND'
     }).format(value)
 
+  const currentUser = useSelector(selectCurrentUser)?.user_id
   const [quantities, setQuantities] = useState({})
   const { setIsLoading } = useLoading()
   const [cards, setCards] = useState([])
@@ -310,9 +313,15 @@ function CardPageManagement() {
                   {formatCurrencyVND(totalAmount)}
                 </Typography>
               </Box>
-              <Link to="checkout">
-                <ButtonContainedPrimary title="Proceed to Checkout" onClick={() => {}} />
-              </Link>
+              {currentUser ? (
+                <Link to="checkout">
+                  <ButtonContainedPrimary title="Proceed to Checkout" onClick={() => {}} />
+                </Link>
+              ): (
+                <Link to="/login">
+                  <ButtonContainedPrimary title="Proceed to Checkout" onClick={() => {}} />
+                </Link>
+              )}
             </Box>
           </Paper>
         </Box>
