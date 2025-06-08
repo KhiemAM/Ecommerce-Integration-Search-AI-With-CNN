@@ -21,15 +21,17 @@ import ButtonSecondary from '~/components/Buttton/ButtonSecondary'
 import ButtonContainedPrimary from '~/components/Buttton/ButtonContainedPrimary'
 import ButtonContainedSecondary from '~/components/Buttton/ButtonContainedSecondary'
 import { useLoading } from '~/context'
-import {
-  deleteCartItemAPI,
-  getCartAPI,
-  updateCartItemAPI,
-  updateSelectedItemCartAPI
-} from '~/apis'
 import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+import {
+  selectCartItems,
+  selectCartTotalPrice,
+  fetchCartAPI,
+  updateCartItemSliceAPI,
+  deleteCartItemSliceAPI,
+  updateSelectedItemSliceAPI
+} from '~/redux/cart/cartSlice'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 600,
@@ -50,85 +52,69 @@ function CardPageManagement() {
       style: 'currency',
       currency: 'VND'
     }).format(value)
-
+  const dispatch = useDispatch()
   const currentUser = useSelector(selectCurrentUser)?.user_id
+  const cartItems = useSelector(selectCartItems)
+  const cartTotalPrice = useSelector(selectCartTotalPrice)
   const [quantities, setQuantities] = useState({})
   const { setIsLoading } = useLoading()
   const [cards, setCards] = useState([])
-
-  const fetchProductDetails = async () => {
-    try {
-      setIsLoading(true)
-      const response = await getCartAPI()
-      setCards(
-        response.map((item) => ({
-          ProductId: item.ProductId,
-          Name: item.Name,
-          Price: item.Price,
-          ImageURL: item.ImageURL,
-          IsChecked: item.IsChecked
-        }))
-      )
-      setQuantities(
-        response.reduce((acc, item) => {
-          acc[item.ProductId] = item.Quantity
-          return acc
-        }, {})
-      )
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
+  // Cập nhật local state khi Redux state thay đổi
   useEffect(() => {
-    fetchProductDetails()
-  }, [])
+    setCards(cartItems)
+    const newQuantities = cartItems.reduce((acc, item) => {
+      acc[item.ProductId] = item.Quantity
+      return acc
+    }, {})
+    setQuantities(newQuantities)
+  }, [cartItems])
 
-  const handleQuantityChange = (productId, value) => {
+  // Chỉ fetch cart nếu chưa có dữ liệu
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      const fetchProductDetails = async () => {
+        try {
+          setIsLoading(true)
+          await dispatch(fetchCartAPI())
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      fetchProductDetails()
+    }
+  }, [dispatch, setIsLoading, cartItems.length])
+
+  const handleQuantityChange = async (productId, value) => {
     const newValue = parseInt(value) || 1
     const clampedValue = Math.max(1, Math.min(99, newValue))
     setQuantities((prev) => ({
       ...prev,
       [productId]: clampedValue
     }))
-    updateCartItemAPI({
+    
+    // Cập nhật Redux state
+    dispatch(updateCartItemSliceAPI({
       product_id: productId,
       quantity: clampedValue
-    })
+    }))
   }
-
   const calculateSubtotal = (price, quantity) => price * quantity
 
-  // ✅ Chỉ tính tổng với sản phẩm được chọn
-  const totalAmount = Object.entries(quantities).reduce((sum, [productId, quantity]) => {
-    const product = cards.find((p) => p.ProductId === parseInt(productId))
-    if (product && product.IsChecked) {
-      return sum + calculateSubtotal(product.Price, quantity)
-    }
-    return sum
-  }, 0)
+  // Sử dụng cartTotalPrice từ Redux thay vì tính toán local
+  const totalAmount = cartTotalPrice
 
   const handleCheckboxChange = async (productId) => {
-    const response = await updateSelectedItemCartAPI({ product_id: productId })
-    setCards((prevCards) =>
-      prevCards.map((item) =>
-        item.ProductId === productId
-          ? { ...item, IsChecked: response.IsChecked }
-          : item
-      )
-    )
+    // Cập nhật Redux state
+    dispatch(updateSelectedItemSliceAPI({ product_id: productId }))
   }
-
   const handleDeleteItem = async (productId) => {
     try {
       setIsLoading(true)
-      const res = await deleteCartItemAPI(productId)
-      setQuantities((prev) => {
-        const newQuantities = { ...prev }
-        delete newQuantities[productId]
-        return newQuantities
-      })
-      toast.success(res.message)
+      // Cập nhật Redux state
+      await dispatch(deleteCartItemSliceAPI(productId))
+      toast.success('Đã xóa sản phẩm khỏi giỏ hàng')
+    } catch {
+      toast.error('Có lỗi xảy ra khi xóa sản phẩm')
     } finally {
       setIsLoading(false)
     }

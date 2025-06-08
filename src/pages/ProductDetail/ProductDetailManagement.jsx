@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Box,
   Container,
@@ -18,6 +18,9 @@ import { FavoriteBorder, LocalShipping, Loop, Add, Remove, ShoppingCart } from '
 import { useParams } from 'react-router-dom'
 import { getProductByIdAPI } from '~/apis'
 import { useLoading } from '~/context'
+import { useDispatch } from 'react-redux'
+import { addToCartSliceAPI, fetchCartAPI } from '~/redux/cart/cartSlice'
+import { toast } from 'react-toastify'
 
 // Common styles
 const commonStyles = {
@@ -142,23 +145,45 @@ const DeliveryInfo = () => (
 function ProductDetailManagement() {
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
-
   const [product, setProduct] = useState(null)
-  console.log('🚀 ~ ProductDetailManagement ~ product:', product)
-
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
   const { id } = useParams()
   const { setIsLoading } = useLoading()
+  const dispatch = useDispatch()
 
-  const fetchProductDetails = async (id) => {
+  const fetchProductDetails = useCallback(async (productId) => {
     setIsLoading(true)
-    const response = await getProductByIdAPI(id)
+    const response = await getProductByIdAPI(productId)
     setProduct(response)
     setIsLoading(false)
+  }, [setIsLoading])
+  const handleAddToCart = async () => {
+    try {
+      setIsAddingToCart(true)
+      const payload = {
+        product_id: product?.id,
+        quantity: quantity
+      }
+
+      // Chỉ dispatch Redux action, action sẽ tự gọi API
+      const result = await dispatch(addToCartSliceAPI(payload))
+      if (result.meta.requestStatus === 'fulfilled') {
+        toast.success('Đã thêm vào giỏ hàng!')
+        // Fetch lại cart để đảm bảo dữ liệu đồng bộ
+        dispatch(fetchCartAPI())
+      } else {
+        toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng!')
+      }
+    } catch {
+      toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng!')
+    } finally {
+      setIsAddingToCart(false)
+    }
   }
 
   useEffect(() => {
     fetchProductDetails(id)
-  }, [id])
+  }, [id, fetchProductDetails])
 
   const images = [
     product?.image_base64,
@@ -224,14 +249,14 @@ function ProductDetailManagement() {
                 }}
               >
                 {product?.Description}
-              </Typography>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 3 }, mb: 4 }}>
+              </Typography>              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 3 }, mb: 4 }}>
                 <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
                 <Button
                   variant="contained"
                   size="large"
                   startIcon={<ShoppingCart />}
+                  onClick={handleAddToCart}
+                  disabled={isAddingToCart}
                   sx={{
                     flexGrow: 1,
                     py: { xs: 1.5, sm: 2 },
@@ -243,7 +268,7 @@ function ProductDetailManagement() {
                     '&:hover': { bgcolor: 'primary.dark' }
                   }}
                 >
-                  Add to Cart
+                  {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                 </Button>
                 <IconButton
                   sx={{

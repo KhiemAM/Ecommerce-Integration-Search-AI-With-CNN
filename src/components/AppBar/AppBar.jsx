@@ -21,8 +21,9 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import SearchButtonModalCustom from '../Search/SearchButtonModalCustom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { logoutUserAPI } from '~/redux/user/userSlice'
+import { selectCartTotalItems, fetchCartAPI } from '~/redux/cart/cartSlice'
 import { useNavigate } from 'react-router-dom'
 
 import { Link } from 'react-router-dom'
@@ -73,8 +74,16 @@ function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
   const dispatch = useDispatch()
+  
+  // Lấy số lượng sản phẩm trong giỏ hàng từ Redux
+  const cartTotalItems = useSelector(selectCartTotalItems)
 
   const navigate = useNavigate()
+
+  // Fetch cart data khi component mount
+  React.useEffect(() => {
+    dispatch(fetchCartAPI())
+  }, [dispatch])
 
   const handleLogout = async () => {
     await dispatch(logoutUserAPI())
@@ -208,15 +217,13 @@ function ResponsiveAppBar() {
                     <FavoriteBorderOutlinedIcon />
                   </Badge>
                 </IconButton>
-              </Link>
-
-              <Link to='/card'>
+              </Link>              <Link to='/card'>
                 <IconButton
                   size="large"
-                  aria-label="show 17 new notifications"
+                  aria-label="show cart items"
                   color="inherit"
                 >
-                  <Badge badgeContent={0} color="error">
+                  <Badge badgeContent={cartTotalItems} color="error">
                     <LocalGroceryStoreOutlinedIcon />
                   </Badge>
                 </IconButton>

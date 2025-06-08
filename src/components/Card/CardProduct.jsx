@@ -12,17 +12,14 @@ import Stack from '@mui/material/Stack'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
-import { addToCartAPI } from '~/apis'
+import { useDispatch } from 'react-redux'
+import { addToCartSliceAPI, fetchCartAPI } from '~/redux/cart/cartSlice'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
 
 export default function CardProduct({ product }) {
-  const currentUser = useSelector(selectCurrentUser)
-  console.log('🚀 ~ CardProduct ~ currentUser:', currentUser)
+  const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
-
   const handleAddToCart = async () => {
     try {
       setIsLoading(true)
@@ -31,9 +28,14 @@ export default function CardProduct({ product }) {
         quantity: 1 // mặc định là 1
       }
 
-      const res = await addToCartAPI(payload)
-      if (res) {
+      // Chỉ dispatch Redux action, action sẽ tự gọi API
+      const result = await dispatch(addToCartSliceAPI(payload))
+      if (result.meta.requestStatus === 'fulfilled') {
         toast.success('Đã thêm vào giỏ hàng!')
+        // Fetch lại cart để đảm bảo dữ liệu đồng bộ
+        dispatch(fetchCartAPI())
+      } else {
+        toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng!')
       }
     } catch {
       toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng!')
