@@ -16,6 +16,7 @@ import SearchProductsPageManagement from './pages/SearchProductPage/SearchProduc
 import ProductDetailManagement from './pages/ProductDetail/ProductDetailManagement'
 import Footer from './components/Footer/Footer'
 import InformationAccountManagement from './pages/InformationAccountPage/InformationAccountManagement'
+import VNPayCallbackManagement from './pages/VNPayCallbackPage/VNPayCallbackManagement'
 function MainLayout() {
   return (
     <Box>
@@ -37,10 +38,10 @@ function App() {
         <Route path="/products" element={<ProductsPageManagement />} />
         <Route path="/wishlist" element={<WishlistPageManagement />} />
         <Route path="/card" element={<CardPageManagement />} />
-        <Route path="/card/checkout" element={<CheckoutPageManagement />} />
-        <Route path="/products/search" element={<SearchProductsPageManagement />} />
+        <Route path="/card/checkout" element={<CheckoutPageManagement />} />        <Route path="/products/search" element={<SearchProductsPageManagement />} />
         <Route path="/product/:id" element={<ProductDetailManagement />} />
         <Route path="/information" element={<InformationAccountManagement />} />
+        <Route path="/vnpay-callback/*" element={<VNPayCallbackManagement />} />
       </Route>
 
       {/* Authentcation */}

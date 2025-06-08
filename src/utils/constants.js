@@ -1,1 +1,1 @@
-export const API_ROOT = 'https://8690-2402-800-63a9-e593-4061-a15b-a9d-b480.ngrok-free.app'
+export const API_ROOT = 'https://3d70-14-161-22-250.ngrok-free.app'
