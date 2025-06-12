@@ -1,18 +1,24 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import Banner from './Banner'
+import HeroSection from './HeroSection'
+import FeaturedCategories from './FeaturedCategories'
 import FlashSales from './FlashSales'
-import Sidebar from './Sidebar'
+import Testimonials from './Testimonials'
+import Newsletter from './Newsletter'
 
 function HomePageManagement() {
   return (
     <Box sx={{
-      // bgcolor: '#000000',
-      height: '100vh'
+      minHeight: '100vh',
+      backgroundColor: 'background.default',
+      width: '100%',
+      overflow: 'hidden'
     }}>
-      <Banner />
-      <Sidebar />
+      <HeroSection />
+      <FeaturedCategories />
       <FlashSales />
+      <Testimonials />
+      <Newsletter />
     </Box>
   )
 }

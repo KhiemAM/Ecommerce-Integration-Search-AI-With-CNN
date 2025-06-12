@@ -9,6 +9,7 @@ import Rating from '@mui/material/Rating'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
+import Chip from '@mui/material/Chip'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import { Link } from 'react-router-dom'
@@ -43,10 +44,21 @@ export default function CardProduct({ product }) {
       setIsLoading(false)
     }
   }
-
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardMedia
+    <Card
+      sx={{
+        maxWidth: 345,
+        borderRadius: 3,
+        boxShadow: '0 4px 20px rgba(115, 199, 199, 0.15)',
+        border: '1px solid rgba(115, 199, 199, 0.1)',
+        overflow: 'hidden',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          boxShadow: '0 8px 32px rgba(115, 199, 199, 0.25)',
+          transform: 'translateY(-4px)'
+        }
+      }}
+    >      <CardMedia
         sx={{
           height: 200,
           position: 'relative',
@@ -62,6 +74,22 @@ export default function CardProduct({ product }) {
         image={`data:image/jpeg;base64,${product.image}`}
         title={product.Name}
       >
+        {/* Discount Badge */}
+        <Chip
+          label="-17%"
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            bgcolor: 'secondary.main',
+            color: 'white',
+            fontWeight: 700,
+            zIndex: 2,
+            boxShadow: '0 2px 8px rgba(255, 138, 128, 0.3)'
+          }}
+        />
+
         <Stack
           className="quick-actions"
           spacing={1}
@@ -76,23 +104,36 @@ export default function CardProduct({ product }) {
           <IconButton
             sx={{
               bgcolor: 'white',
-              '&:hover': { bgcolor: 'white' }
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              '&:hover': {
+                bgcolor: 'secondary.main',
+                color: 'white',
+                transform: 'scale(1.1)'
+              },
+              transition: 'all 0.2s ease'
             }}
+            size="small"
           >
-            <FavoriteBorderOutlinedIcon />
+            <FavoriteBorderOutlinedIcon fontSize="small" />
           </IconButton>
           <IconButton
             sx={{
               bgcolor: 'white',
-              '&:hover': { bgcolor: 'white' }
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              '&:hover': {
+                bgcolor: 'primary.main',
+                color: 'white',
+                transform: 'scale(1.1)'
+              },
+              transition: 'all 0.2s ease'
             }}
+            size="small"
           >
-            <VisibilityOutlinedIcon />
+            <VisibilityOutlinedIcon fontSize="small" />
           </IconButton>
-        </Stack>
-        <Button
+        </Stack><Button
           loading={isLoading}
-          loadingPosition='start'
+          loadingPosition="start"
           onClick={handleAddToCart}
           className="hover-button"
           variant="contained"
@@ -105,15 +146,20 @@ export default function CardProduct({ product }) {
             transform: 'translateX(-50%)',
             opacity: 0,
             transition: 'all 0.3s ease-in-out',
-            backgroundColor: '#73C7C7',
-            borderRadius: 0,
-            color: 'white'
+            backgroundColor: 'primary.main',
+            borderRadius: 2,
+            color: 'white',
+            fontWeight: 600,
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+              transform: 'translateX(-50%) translateY(-2px)',
+              boxShadow: '0 6px 20px rgba(115, 199, 199, 0.4)'
+            }
           }}
         >
-          Add To Card
+          {isLoading ? 'Đang thêm...' : 'Thêm vào giỏ'}
         </Button>
-      </CardMedia>
-      <CardContent>
+      </CardMedia>      <CardContent sx={{ p: 2 }}>
         <Typography
           gutterBottom
           variant="h6"
@@ -122,25 +168,89 @@ export default function CardProduct({ product }) {
           sx={{
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            textDecoration: 'none',
+            color: 'inherit',
+            '&:hover': {
+              color: 'primary.main'
+            },
+            fontSize: '1rem',
+            fontWeight: 600,
+            mb: 1
           }}
         >
           {product.Name}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="body2" sx={{ color: 'red' }}>
-            ${product.Price}
+
+        {/* Price Section with Vietnamese Currency */}
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'primary.main',
+              fontWeight: 700,
+              fontSize: '1.1rem'
+            }}
+          >
+            {product.Price?.toLocaleString('vi-VN')}₫
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-            <Rating value={product.rating} readOnly size="small" />
+
+          {/* Original price (simulate discount) */}
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              textDecoration: 'line-through',
+              fontSize: '0.9rem'
+            }}
+          >
+            {Math.round(product.Price * 1.2)?.toLocaleString('vi-VN')}₫
+          </Typography>
+
+          {/* Discount badge */}
+          <Chip
+            label="-17%"
+            size="small"
+            sx={{
+              bgcolor: 'secondary.main',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: '0.7rem',
+              height: 20
+            }}
+          />
+        </Stack>
+
+        {/* Rating and Reviews */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Rating
+              value={product.rating}
+              readOnly
+              size="small"
+              sx={{ color: 'secondary.main' }}
+            />
             <Typography
-              variant="body2"
+              variant="caption"
               color="text.secondary"
-              sx={{ ml: 1 }}
+              sx={{ ml: 0.5 }}
             >
               ({product.reviews})
             </Typography>
           </Box>
+
+          {/* Status chip */}
+          <Chip
+            label="Còn hàng"
+            size="small"
+            variant="outlined"
+            sx={{
+              color: 'success.main',
+              borderColor: 'success.main',
+              fontSize: '0.7rem',
+              height: 20
+            }}
+          />
         </Box>
       </CardContent>
     </Card>

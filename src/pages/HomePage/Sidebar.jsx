@@ -1,29 +1,29 @@
-import React from 'react';
-import { 
-  List, 
-  ListItem, 
-  ListItemText, 
-  ListItemIcon, 
-  Divider, 
+import React from 'react'
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
   Box,
   useTheme,
   useMediaQuery
-} from '@mui/material';
-import { ChevronRight } from 'lucide-react';
-import { categories } from './data';
+} from '@mui/material'
+import { ChevronRight } from 'lucide-react'
+import { categories } from './data'
 
 const Sidebar = ({ isDesktop = true }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   if (!isDesktop && !isMobile) {
-    return null;
+    return null
   }
 
   return (
-    <Box 
-      component="nav" 
-      sx={{ 
+    <Box
+      component="nav"
+      sx={{
         width: '100%',
         maxWidth: isDesktop ? 250 : '100%',
         bgcolor: 'background.paper',
@@ -34,21 +34,21 @@ const Sidebar = ({ isDesktop = true }) => {
       <List disablePadding>
         {categories.map((category, index) => (
           <React.Fragment key={category.id}>
-            <ListItem 
-              button 
+            <ListItem
+              button
               sx={{
                 py: 1.5,
                 '&:hover': {
-                  bgcolor: 'rgba(0, 0, 0, 0.04)',
+                  bgcolor: 'rgba(0, 0, 0, 0.04)'
                 },
                 transition: 'background-color 0.3s ease'
               }}
             >
-              <ListItemText 
+              <ListItemText
                 primary={category.name}
                 primaryTypographyProps={{
                   fontSize: '0.9rem',
-                  fontWeight: 500,
+                  fontWeight: 500
                 }}
               />
               {category.hasSubmenu && (
@@ -62,7 +62,7 @@ const Sidebar = ({ isDesktop = true }) => {
         ))}
       </List>
     </Box>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

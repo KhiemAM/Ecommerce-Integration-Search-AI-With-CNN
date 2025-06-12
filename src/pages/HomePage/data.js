@@ -1,96 +1,129 @@
 export const categories = [
-  { id: 1, name: "Woman's Fashion", hasSubmenu: true },
-  { id: 2, name: "Men's Fashion", hasSubmenu: true },
-  { id: 3, name: "Electronics", hasSubmenu: false },
-  { id: 4, name: "Home & Lifestyle", hasSubmenu: false },
-  { id: 5, name: "Medicine", hasSubmenu: false },
-  { id: 6, name: "Sports & Outdoor", hasSubmenu: false },
-  { id: 7, name: "Baby's & Toys", hasSubmenu: false },
-  { id: 8, name: "Groceries & Pets", hasSubmenu: false },
-  { id: 9, name: "Health & Beauty", hasSubmenu: false },
-];
+  { id: 1, name: 'Hoa Tươi', hasSubmenu: true },
+  { id: 2, name: 'Hoa Cưới', hasSubmenu: true },
+  { id: 3, name: 'Hoa Sinh Nhật', hasSubmenu: false },
+  { id: 4, name: 'Hoa Chia Buồn', hasSubmenu: false },
+  { id: 5, name: 'Hoa Chúc Mừng', hasSubmenu: false },
+  { id: 6, name: 'Hoa Lễ Tết', hasSubmenu: false },
+  { id: 7, name: 'Hoa Khô', hasSubmenu: false },
+  { id: 8, name: 'Phụ Kiện Hoa', hasSubmenu: false },
+  { id: 9, name: 'Cây Cảnh', hasSubmenu: false }
+]
 
 export const products = [
   {
     id: 1,
-    name: "HAVIT HV-G92 Gamepad",
-    currentPrice: 120,
-    originalPrice: 160,
+    name: 'Hoa Hồng Đỏ Tươi',
+    currentPrice: 120000,
+    originalPrice: 200000,
     discount: 40,
-    image: "https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: 'https://images.pexels.com/photos/736230/pexels-photo-736230.jpeg?auto=compress&cs=tinysrgb&w=600',
     rating: 5,
     reviews: 88,
-    category: "Electronics"
+    category: 'Flowers'
   },
   {
     id: 2,
-    name: "AK-900 Wired Keyboard",
-    currentPrice: 960,
-    originalPrice: 1160,
+    name: 'Bó Hoa Tulip Vàng',
+    currentPrice: 960000,
+    originalPrice: 1480000,
     discount: 35,
-    image: "https://images.pexels.com/photos/2115257/pexels-photo-2115257.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: 'https://images.pexels.com/photos/1458306/pexels-photo-1458306.jpeg?auto=compress&cs=tinysrgb&w=600',
     rating: 4,
     reviews: 75,
-    category: "Electronics"
+    category: 'Flowers'
   },
   {
     id: 3,
-    name: "IPS LCD Gaming Monitor",
-    currentPrice: 370,
-    originalPrice: 400,
+    name: 'Hoa Ly Trắng Tinh Khôi',
+    currentPrice: 370000,
+    originalPrice: 530000,
     discount: 30,
-    image: "https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: 'https://images.pexels.com/photos/1068774/pexels-photo-1068774.jpeg?auto=compress&cs=tinysrgb&w=600',
     rating: 5,
     reviews: 99,
-    category: "Electronics"
+    category: 'Flowers'
   },
   {
     id: 4,
-    name: "S-Series Comfort Chair",
-    currentPrice: 375,
-    originalPrice: 400,
+    name: 'Bó Hoa Cúc Họa Mi',
+    currentPrice: 375000,
+    originalPrice: 500000,
     discount: 25,
-    image: "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=600",
+    image: 'https://images.pexels.com/photos/931162/pexels-photo-931162.jpeg?auto=compress&cs=tinysrgb&w=600',
     rating: 5,
     reviews: 99,
-    category: "Home & Lifestyle"
+    category: 'Flowers'
   },
   {
     id: 5,
-    name: "S-Series Comfort Chair Black",
-    currentPrice: 375,
-    originalPrice: 400,
-    discount: 25,
-    image: "https://images.pexels.com/photos/116910/pexels-photo-116910.jpeg?auto=compress&cs=tinysrgb&w=600",
+    name: 'Hoa Hướng Dương Tươi',
+    currentPrice: 275000,
+    originalPrice: 350000,
+    discount: 21,
+    image: 'https://images.pexels.com/photos/847393/pexels-photo-847393.jpeg?auto=compress&cs=tinysrgb&w=600',
     rating: 5,
-    reviews: 99,
-    category: "Home & Lifestyle"
+    reviews: 156,
+    category: 'Flowers'
+  },
+  {
+    id: 6,
+    name: 'Bó Hoa Lavender Tím',
+    currentPrice: 180000,
+    originalPrice: 240000,
+    discount: 25,
+    image: 'https://images.pexels.com/photos/1084542/pexels-photo-1084542.jpeg?auto=compress&cs=tinysrgb&w=600',
+    rating: 4,
+    reviews: 67,
+    category: 'Flowers'
+  },
+  {
+    id: 7,
+    name: 'Hoa Sakura Nhật Bản',
+    currentPrice: 450000,
+    originalPrice: 600000,
+    discount: 25,
+    image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=600',
+    rating: 5,
+    reviews: 203,
+    category: 'Flowers'
+  },
+  {
+    id: 8,
+    name: 'Bó Hoa Cẩm Chướng Hồng',
+    currentPrice: 320000,
+    originalPrice: 420000,
+    discount: 24,
+    image: 'https://images.pexels.com/photos/1022923/pexels-photo-1022923.jpeg?auto=compress&cs=tinysrgb&w=600',
+    rating: 4,
+    reviews: 89,
+    category: 'Flowers'
   }
-];
+]
 
 export const bannerSlides = [
   {
     id: 1,
-    title: "Up to 10% off Voucher",
-    subtitle: "iPhone 14 Series",
-    image: "https://images.pexels.com/photos/1294886/pexels-photo-1294886.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    buttonText: "Shop Now",
-    buttonLink: "#",
+    title: 'Giảm giá lên đến 50%',
+    subtitle: 'Bộ sưu tập hoa tươi mùa xuân',
+    image: 'https://images.pexels.com/photos/1458306/pexels-photo-1458306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    buttonText: 'Mua ngay',
+    buttonLink: '#'
   },
   {
     id: 2,
-    title: "Spring Collection 2025",
-    subtitle: "New Arrivals",
-    image: "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    buttonText: "Discover",
-    buttonLink: "#",
+    title: 'Hoa cưới thiết kế độc đáo',
+    subtitle: 'Cho ngày trọng đại của bạn',
+    image: 'https://images.pexels.com/photos/1068774/pexels-photo-1068774.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    buttonText: 'Khám phá',
+    buttonLink: '#'
   },
   {
     id: 3,
-    title: "Holiday Special",
-    subtitle: "Limited Time Offers",
-    image: "https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    buttonText: "Shop Now",
-    buttonLink: "#",
-  },
-];
+    title: 'Ưu đãi đặc biệt cuối tuần',
+    subtitle: 'Hoa tươi giao nhanh trong ngày',
+    image: 'https://images.pexels.com/photos/736230/pexels-photo-736230.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    buttonText: 'Đặt hàng',
+    buttonLink: '#'
+  }
+]

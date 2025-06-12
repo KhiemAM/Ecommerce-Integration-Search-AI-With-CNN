@@ -14,8 +14,7 @@ import {
 } from '@mui/material'
 import { Heart, Eye } from 'lucide-react'
 import { useDispatch } from 'react-redux'
-import { addToCartSliceAPI } from '~/redux/cart/cartSlice'
-import { addToCartAPI } from '~/apis'
+import { addToCartSliceAPI, fetchCartAPI } from '~/redux/cart/cartSlice'
 import { toast } from 'react-toastify'
 
 const ProductCard = ({ product }) => {
@@ -27,7 +26,6 @@ const ProductCard = ({ product }) => {
   const handleFavoriteClick = () => {
     setIsFavorite(!isFavorite)
   }
-
   const handleAddToCart = async () => {
     try {
       setIsAddingToCart(true)
@@ -36,12 +34,14 @@ const ProductCard = ({ product }) => {
         quantity: 1
       }
 
-      // Gọi API để thêm vào giỏ hàng
-      const res = await addToCartAPI(payload)
-      if (res) {
-        // Cập nhật Redux state
-        dispatch(addToCartSliceAPI(payload))
+      // Chỉ dispatch Redux action, action sẽ tự gọi API
+      const result = await dispatch(addToCartSliceAPI(payload))
+      if (result.meta.requestStatus === 'fulfilled') {
         toast.success('Đã thêm vào giỏ hàng!')
+        // Fetch lại cart để đảm bảo dữ liệu đồng bộ
+        dispatch(fetchCartAPI())
+      } else {
+        toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng!')
       }
     } catch {
       toast.error('Có lỗi xảy ra khi thêm vào giỏ hàng!')
@@ -136,19 +136,19 @@ const ProductCard = ({ product }) => {
               right: 0,
               p: 1
             }}
-          >
-            <Button
+          >            <Button
               variant="contained"
               fullWidth
               onClick={handleAddToCart}
-              disabled={isAddingToCart} sx={{
+              disabled={isAddingToCart}
+              sx={{
                 py: 1,
                 textTransform: 'none',
                 fontWeight: 600,
                 boxShadow: '0 4px 12px rgba(255, 71, 71, 0.3)'
               }}
             >
-              {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+              {isAddingToCart ? 'Đang thêm...' : 'Thêm vào giỏ'}
             </Button>
           </Box>
         </Grow>
@@ -157,15 +157,13 @@ const ProductCard = ({ product }) => {
       <CardContent sx={{ pt: 2, pb: 1.5, flexGrow: 1 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 0.5 }}>
           {product.name}
-        </Typography>
-
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+        </Typography>        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
           <Typography
             variant="subtitle1"
             color="primary.main"
             sx={{ fontWeight: 600 }}
           >
-            ${product.currentPrice}
+            {product.currentPrice?.toLocaleString('vi-VN')}₫
           </Typography>
 
           <Typography
@@ -173,7 +171,7 @@ const ProductCard = ({ product }) => {
             color="text.secondary"
             sx={{ textDecoration: 'line-through' }}
           >
-            ${product.originalPrice}
+            {product.originalPrice?.toLocaleString('vi-VN')}₫
           </Typography>
         </Stack>
 

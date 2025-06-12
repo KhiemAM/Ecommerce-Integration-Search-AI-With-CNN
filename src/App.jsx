@@ -17,13 +17,14 @@ import ProductDetailManagement from './pages/ProductDetail/ProductDetailManageme
 import Footer from './components/Footer/Footer'
 import InformationAccountManagement from './pages/InformationAccountPage/InformationAccountManagement'
 import VNPayCallbackManagement from './pages/VNPayCallbackPage/VNPayCallbackManagement'
+import PageContainer from './components/Layout/PageContainer'
 function MainLayout() {
   return (
     <Box>
       <ResponsiveAppBar />
-      <Container maxWidth="lg">
+      <Box sx={{ minHeight: 'calc(100vh - 60px)' }}>
         <Outlet /> {/* Nội dung của Route sẽ được render tại đây */}
-      </Container>
+      </Box>
       <Footer />
     </Box>
   )
@@ -31,17 +32,17 @@ function MainLayout() {
 
 function App() {
 
-  return (
-    <Routes>
+  return (    <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePageManagement />} />
-        <Route path="/products" element={<ProductsPageManagement />} />
-        <Route path="/wishlist" element={<WishlistPageManagement />} />
-        <Route path="/card" element={<CardPageManagement />} />
-        <Route path="/card/checkout" element={<CheckoutPageManagement />} />        <Route path="/products/search" element={<SearchProductsPageManagement />} />
-        <Route path="/product/:id" element={<ProductDetailManagement />} />
-        <Route path="/information" element={<InformationAccountManagement />} />
-        <Route path="/vnpay-callback/*" element={<VNPayCallbackManagement />} />
+        <Route path="/products" element={<PageContainer><ProductsPageManagement /></PageContainer>} />
+        <Route path="/wishlist" element={<PageContainer><WishlistPageManagement /></PageContainer>} />
+        <Route path="/card" element={<PageContainer><CardPageManagement /></PageContainer>} />
+        <Route path="/card/checkout" element={<PageContainer><CheckoutPageManagement /></PageContainer>} />
+        <Route path="/products/search" element={<PageContainer><SearchProductsPageManagement /></PageContainer>} />
+        <Route path="/product/:id" element={<PageContainer><ProductDetailManagement /></PageContainer>} />
+        <Route path="/information" element={<PageContainer><InformationAccountManagement /></PageContainer>} />
+        <Route path="/vnpay-callback/*" element={<PageContainer><VNPayCallbackManagement /></PageContainer>} />
       </Route>
 
       {/* Authentcation */}

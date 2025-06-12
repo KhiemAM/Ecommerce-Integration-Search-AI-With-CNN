@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
   Box,
   Typography,
   Stack,
   Button,
   useTheme,
+  useMediaQuery,
   IconButton,
   Container,
   Paper
@@ -12,50 +13,10 @@ import {
 import { ChevronLeft, ChevronRight, Zap } from 'lucide-react'
 import CountdownTimer from './CountdownTimer'
 import ProductGrid from './ProductGrid'
-import { getAllProductsAPI } from '~/apis'
-import { useLoading } from '~/context'
-import { getRandomNumber } from '~/utils/formatters'
+import { products } from './data'
 
 const FlashSales = () => {
   const theme = useTheme()
-  const { setIsLoading } = useLoading()
-  const [products, setProducts] = useState([])
-  const formatData = (data) => {
-    return data.map((item) => ({
-      ...item,
-      name: item.Name, // Map Name từ API thành name cho ProductCard
-      image: `data:image/jpeg;base64,${item.image_base64}`, // Format đúng cho ProductCard
-      isNew: false,
-      rating: getRandomNumber(1, 5),
-      reviews: getRandomNumber(1, 100),
-      currentPrice: item.Price, // Sử dụng giá trực tiếp từ API (đã là VND)
-      originalPrice: Math.round(item.Price * 1.5), // Tạo giá gốc cao hơn 50%
-      discount: Math.round(((item.Price * 1.5 - item.Price) / (item.Price * 1.5)) * 100)
-    }))
-  }
-
-  useEffect(() => {
-    const fetchFlashSalesData = async () => {
-      try {
-        setIsLoading(true)
-        const response = await getAllProductsAPI()
-        if (response && response.data && Array.isArray(response.data)) {
-          const formattedProducts = formatData(response.data)
-          // Lấy ngẫu nhiên 8 sản phẩm cho Flash Sales
-          const shuffled = formattedProducts.sort(() => 0.5 - Math.random())
-          setProducts(shuffled.slice(0, 8))
-        } else {
-          setProducts([])
-        }
-      } catch {
-        setProducts([])
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchFlashSalesData()
-  }, [setIsLoading])
 
   const endDate = new Date()
   endDate.setDate(endDate.getDate() + 3)
@@ -99,20 +60,22 @@ const FlashSales = () => {
                 color="text.primary"
                 sx={{ mb: 0.5 }}
               >
-                Hoa Khuyến Mãi
+                Flash Sales
               </Typography>
               <Typography
                 variant="body1"
                 color="text.secondary"
               >
-                Ưu đãi đặc biệt cho hoa tươi - Đừng bỏ lỡ!
+                Limited time offers - Don't miss out!
               </Typography>
             </Box>
           </Stack>
+
           <CountdownTimer targetDate={endDate} />
         </Stack>
+
         <Box sx={{ position: 'relative' }}>
-          <ProductGrid products={products} />
+          <ProductGrid products={products.slice(0, 4)} />
 
           <Stack
             direction="row"
@@ -155,6 +118,7 @@ const FlashSales = () => {
             </IconButton>
           </Stack>
         </Box>
+
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <Button
             variant="contained"
@@ -171,7 +135,7 @@ const FlashSales = () => {
               }
             }}
           >
-            Xem Tất Cả Hoa Khuyến Mãi
+            View All Flash Sales
           </Button>
         </Box>
       </Paper>

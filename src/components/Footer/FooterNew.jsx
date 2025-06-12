@@ -23,22 +23,23 @@ const Footer = () => {
   return (
     <Box sx={{ bgcolor: 'black', color: 'white', py: 6, mt: 8 }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4}>          {/* Flower Shop Section */}
+        <Grid container spacing={4}>
+          {/* Exclusive Section */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Flower Paradise
+              Exclusive
             </Typography>
             <Stack spacing={2}>
-              <Typography variant="body2">Đăng ký nhận thông tin</Typography>
+              <Typography variant="body2">Subscribe</Typography>
               <Typography variant="body2" sx={{ color: 'grey.400' }}>
-                Nhận ưu đãi 10% cho đơn hàng đầu tiên
+                Get 10% off your first order
               </Typography>
               <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex' }}>
                 <TextField
                   size="small"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Nhập email của bạn"
+                  placeholder="Enter your email"
                   sx={{
                     flexGrow: 1,
                     '& .MuiOutlinedInput-root': {
@@ -63,27 +64,29 @@ const Footer = () => {
                 </IconButton>
               </Box>
             </Stack>
-          </Grid>          {/* Support Section */}
+          </Grid>
+
+          {/* Support Section */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Liên Hệ
+              Support
             </Typography>
             <Stack spacing={1} sx={{ color: 'grey.400' }}>
               <Typography variant="body2">
-                123 Đường Hoa Tươi, Quận 1, TP.HCM
+                111 Bijoy sarani, Dhaka, DH 1515, Bangladesh
               </Typography>
-              <Typography variant="body2">flowerparadise@gmail.com</Typography>
-              <Typography variant="body2">+84 901-234-567</Typography>
+              <Typography variant="body2">exclusive@gmail.com</Typography>
+              <Typography variant="body2">+88015-88888-9999</Typography>
             </Stack>
           </Grid>
 
           {/* Account Section */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Tài Khoản
+              Account
             </Typography>
             <Stack spacing={1} sx={{ color: 'grey.400' }}>
-              {['Tài khoản của tôi', 'Đăng nhập / Đăng ký', 'Giỏ hàng', 'Yêu thích', 'Sản phẩm'].map((item) => (
+              {['My Account', 'Login / Register', 'Cart', 'Wishlist', 'Shop'].map((item) => (
                 <Link
                   key={item}
                   href="#"
@@ -97,13 +100,15 @@ const Footer = () => {
                 </Link>
               ))}
             </Stack>
-          </Grid>          {/* Quick Link Section */}
+          </Grid>
+
+          {/* Quick Link Section */}
           <Grid item xs={12} md={3}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Liên Kết Nhanh
+              Quick Link
             </Typography>
             <Stack spacing={1} sx={{ color: 'grey.400' }}>
-              {['Chính sách bảo mật', 'Điều khoản sử dụng', 'Câu hỏi thường gặp', 'Liên hệ'].map((item) => (
+              {['Privacy Policy', 'Terms Of Use', 'FAQ', 'Contact'].map((item) => (
                 <Link
                   key={item}
                   href="#"
@@ -128,8 +133,9 @@ const Footer = () => {
           justifyContent="space-between"
           alignItems="center"
           spacing={2}
-        >          <Typography variant="body2" sx={{ color: 'grey.500' }}>
-            © 2024 Flower Paradise. Tất cả quyền được bảo lưu.
+        >
+          <Typography variant="body2" sx={{ color: 'grey.500' }}>
+            © 2024 Exclusive. All rights reserved.
           </Typography>
           
           <Stack direction="row" spacing={2}>
